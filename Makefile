@@ -20,7 +20,7 @@ endef
 $(foreach element,$(MSVC_VERS),$(eval $(call build-targets,$(element))))
 
 build/msvc14_iso: build/vs2015.com_enu.iso
-	xorriso -osirrox on -indev build/vs2015.com_enu.iso -extract / $@
+	#xorriso -osirrox on -indev build/vs2015.com_enu.iso -extract / $@
 
 build/vs2015.com_enu.iso:
 	mkdir -p build

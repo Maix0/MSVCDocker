@@ -64,7 +64,7 @@ If ($msvc_ver -eq "9") {
     $vcvars64="`"$vcvarsbat`" x86_amd64"
 } ElseIf ($msvc_ver -eq "14") {
     # use extracted iso file for full offline installer
-    Start-Process -FilePath "C:\vagrant\msvc14_iso\vs_community.exe" -ArgumentList "/noRestart","/passive","/full" -Wait
+    Start-Process -FilePath "C:\vagrant\msvc14_iso\vs_community.exe" -ArgumentList "/NoRestart","/NoRefresh","/NoWeb","/passive","/full" -Wait
 
     $vcvarsbat="$programFilesX86\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
     $vcvars32="`"$vcvarsbat`" x86"
