@@ -20,6 +20,22 @@ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.
 # set strong cryptography on 64 bit .Net Framework (version 4 and above)
 Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord 
 
+#install vc_redis_2015
+$vc_redist_x86_url="https://download.microsoft.com/download/9/3/f/93fcf1e7-e6a4-478b-96e7-d4b285925b00/vc_redist.x86.exe"
+$vc_redist_x64_url="https://download.microsoft.com/download/9/3/f/93fcf1e7-e6a4-478b-96e7-d4b285925b00/vc_redist.x64.exe"
+
+$vc_redist_x86_file="C:\Windows\Temp\vc_redist.x86.exe"
+$vc_redist_x64_file="C:\Windows\Temp\vc_redist.x64.exe"
+
+
+echo $vc_redist_x86_url
+(New-Object System.Net.WebClient).DownloadFile($vc_redist_x86_url, $vc_redist_x86_file)
+Start-Process -FilePath $vc_redist_x86_file -ArgumentList "/install","/quiet"
+
+echo $vc_redist_x64_url
+(New-Object System.Net.WebClient).DownloadFile($vc_redist_x64_url, $vc_redist_x64_file)
+Start-Process -FilePath $vc_redist_x64_file -ArgumentList "/install","/quiet"
+
 # install chocolatey package manager
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 echo $env:ChocolateyInstall
@@ -63,7 +79,7 @@ If ($regdiffHash -eq $regdiffExpectedHash) {
 $subinaclName="subinacl.msi"
 $subinaclArchive="$subinaclName"
 $subinaclArchivePath="C:\Windows\Temp\$subinaclArchive"
-$subinaclUrl="https://web.archive.org/web/20190830103837/https://download.microsoft.com/download/1/7/d/17d82b72-bc6a-4dc8-bfaa-98b37b22b367/$subinaclArchive"
+$subinaclUrl="https://web.archive.org/web/20190830103837id_/https://download.microsoft.com/download/1/7/d/17d82b72-bc6a-4dc8-bfaa-98b37b22b367/$subinaclArchive"
 echo $subinaclUrl
 (New-Object System.Net.WebClient).DownloadFile($subinaclUrl, $subinaclArchivePath)
 $subinaclHash = (Get-FileHash $subinaclArchivePath -Algorithm MD5).Hash

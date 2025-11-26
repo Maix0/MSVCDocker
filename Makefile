@@ -4,8 +4,10 @@ DOCKERCMD = docker
 VAGRANTCMD = vagrant
 VAGRANTARGS = 
 
+default: msvc14
+
 define build-targets
-  buildsnapshot$1: Vagrantfile setupbasebox
+  buildsnapshot$1: Vagrantfile
 		$(VAGRANTCMD) up $(VAGRANTARGS) --provision win-msvc$1
 		$(VAGRANTCMD) halt win-msvc$1
 
@@ -17,6 +19,15 @@ endef
 
 $(foreach element,$(MSVC_VERS),$(eval $(call build-targets,$(element))))
 
+build/msvc14_iso: build/vs2015.com_enu.iso
+	xorriso -osirrox on -indev build/vs2015.com_enu.iso -extract / $@
+
+build/vs2015.com_enu.iso:
+	mkdir -p build
+	wget "http://download.microsoft.com/download/0/B/C/0BC321A4-013F-479C-84E6-4A2F90B11269/vs2015.com_enu.iso" -O $@
+
+buildsnapshot14: build/msvc14_iso
+
 .PHONY: clean dockercheck
 
 clean:
@@ -27,9 +38,6 @@ clean:
 
 dockercheck:
 	$(DOCKERCMD) images
-
-setupbasebox: ./vagranttools/setupbasebox.sh
-	./vagranttools/setupbasebox.sh
 
 buildwine: Dockerfile.wine dockercheck
 	$(DOCKERCMD) build -f Dockerfile.wine -t wine:$(WINE_VER) --build-arg WINE_VER=$(WINE_VER) .

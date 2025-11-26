@@ -63,7 +63,8 @@ If ($msvc_ver -eq "9") {
     $vcvars32="`"$vcvarsbat`" x86"
     $vcvars64="`"$vcvarsbat`" x86_amd64"
 } ElseIf ($msvc_ver -eq "14") {
-    choco install -y visualcpp-build-tools --version 14.0.25420.1
+    # use extracted iso file for full offline installer
+    Start-Process -FilePath "C:\vagrant\msvc14_iso\vs_community.exe" -ArgumentList "/noRestart","/passive","/full" -Wait
 
     $vcvarsbat="$programFilesX86\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
     $vcvars32="`"$vcvarsbat`" x86"

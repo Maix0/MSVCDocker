@@ -21,37 +21,33 @@ Vagrant.configure("2") do |config|
         vmname = "win-msvc%s" % [ msvc ]
 
         config.vm.define vmname do |vmconfig|
-            vmconfig.vm.box = "Microsoft/EdgeOnWindows10"
-            vmconfig.vm.box_version = "0"
+            vmconfig.vm.box = "gusztavvargadr/windows-10"
             vmconfig.vm.guest = :windows
+
+            vmconfig.ssh.username = vmconfig.winrm.username
+            vmconfig.ssh.password = vmconfig.winrm.password
+            vmconfig.ssh.insert_key = false
             vmconfig.vm.synced_folder "build", "/vagrant"
 
-            vmconfig.winrm.username = vmconfig.ssh.username = "IEUser"
-            vmconfig.winrm.password = vmconfig.ssh.password = "Passw0rd!"
-            vmconfig.ssh.insert_key = false
-
-            vmconfig.vm.boot_timeout = ENV['TIMEOUT'].to_i if ENV['TIMEOUT']
+            vmconfig.vm.synced_folder ".", "/dev"
 
             vmconfig.vm.provider :virtualbox do |v, override|
                 v.name = vmname
                 v.linked_clone = true
-                v.customize ['modifyvm', :id, 
-                             '--clipboard', 'bidirectional', 
-                             '--cpuexecutioncap', '100'
-                            ]
-
                 v.memory = 4096
+                v.gui = true;
 
                 # set the vm's cpus to the number of host cpus
                 if RUBY_PLATFORM.downcase.include? "darwin"
                     v.cpus = `sysctl -n hw.physicalcpu`
                 elsif RUBY_PLATFORM.downcase.include? "linux"
                     v.cpus = `nproc`
+                else 
+                    v.cpus = 4;
                 end
             end
 
             vmconfig.vm.communicator = "winrm"
-
             vmconfig.vm.provision "shell", path: "vagranttools/setup_basic.ps1"
 
             outputdir = "\\\\vboxsvr\\vagrant\\msvc#{msvc}\\snapshots"
@@ -60,7 +56,6 @@ Vagrant.configure("2") do |config|
             cmpdir= "#{outputdir}\\CMP"
 
             vmconfig.vm.provision "shell", path: "vagranttools/snapshot.bat", args: [ snapshot1dir ]
-
             if msvc == "test"
                 vmconfig.vm.provision "shell", inline: "choco install -y firefox"
             else
@@ -68,9 +63,9 @@ Vagrant.configure("2") do |config|
                                                args: [ "-msvc_ver", msvc, "-output_dir", snapshot2dir ]
             end
             vmconfig.vm.provision :reload
-
+            
             vmconfig.vm.provision "shell", path: "vagranttools/snapshot.bat", args: [ snapshot2dir ]
-
+            
             vmconfig.vm.provision "shell", path: "vagranttools/compare-snapshots.bat", 
                                            args: [ snapshot1dir, snapshot2dir, cmpdir ]
         end
