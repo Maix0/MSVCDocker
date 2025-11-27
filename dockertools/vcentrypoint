@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
 case "$1" in
-clang-cl) "$@";;
-lld-link) "$@";;
 bash) "$@";;
+sh) "$@";;
 zsh) "$@";;
 "") vcwine cmd;;
 *) vcwine cmd /c "$@";;
