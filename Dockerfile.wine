@@ -73,8 +73,8 @@ RUN umask $WINE_UMASK && wine which --version;
 ENV WINEDEBUG="-all"
 
 # support for mult-user wine
-ADD dockertools/wineexec /usr/local/bin/wine
-ADD dockertools/wineexec /usr/local/bin/wine64
+ADD wineexec /usr/local/bin/wine
+ADD wineexec /usr/local/bin/wine64
 
 # reboot for luck
 RUN umask $WINE_UMASK && winetricks win10;
