@@ -17,10 +17,10 @@ define build-targets
 
   buildsnapshot$1: build/msvc$1/snapshots/CMP/.CACHETAG
 
-  buildmsvc$1: buildsnapshot$1 Dockerfile dockercheck
+  buildmsvc$1: buildsnapshot$1 Dockerfile
 		$(DOCKERCMD) build -f Dockerfile -t msvc:$1 --build-arg WINE_VER=$(WINE_VER) --build-arg MSVC=$1 .
 
-  msvc$1: dockercheck buildsnapshot$1 buildwine buildmsvc$1
+  msvc$1: buildsnapshot$1 buildwine buildmsvc$1
 endef
 
 $(foreach element,$(MSVC_VERS),$(eval $(call build-targets,$(element))))
@@ -38,16 +38,12 @@ build/vs2015.com_enu.iso:
 
 buildsnapshot14: build/msvc14_iso
 
-.PHONY: clean dockercheck
+.PHONY: clean
 
 clean:
 	rm -rf build/msvc*
 	$(VAGRANTCMD) destroy --force || true
 	$(VAGRANTCMD) global-status --prune || true
-	VBoxManage list vms || true
 
-dockercheck:
-	$(DOCKERCMD) images
-
-buildwine: Dockerfile.wine dockercheck
+buildwine: Dockerfile.wine
 	$(DOCKERCMD) build -f Dockerfile.wine -t wine:$(WINE_VER) --build-arg WINE_VER=$(WINE_VER) .
