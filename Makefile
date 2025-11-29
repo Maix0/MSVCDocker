@@ -42,3 +42,26 @@ clean:
 
 buildwine: Dockerfile.wine
 	$(DOCKERCMD) build -f Dockerfile.wine -t wine:$(WINE_VER) --build-arg WINE_VER=$(WINE_VER) dockertools
+
+exports: .exports/wine.docker.tar.gz .exports/msvc.docker.tar.gz .exports/snapshots.tar.gz
+
+.exports/wine.docker.tar.gz:
+	@mkdir -p .exports
+	-docker image save wine:$(WINE_VER) | gzip > "$@"
+
+.exports/msvc.docker.tar.gz:
+	@mkdir -p .exports
+	-docker image save msvc:14 | gzip > "$@"
+
+.exports/snapshots.tar.gz:
+	@mkdir -p .exports
+	-tar -cvzf "$@" build/msvc14/snapshots
+
+imports: imports/wine.docker.tar.gz imports/msvc.docker.tar.gz imports/snapshots.tar.gz
+
+imports/wine.docker.tar.gz:
+	-docker image load < .exports/wine.docker.tar.gz
+imports/msvc.docker.tar.gz:
+	-docker image load < .exports/msvc.docker.tar.gz
+imports/snapshots.tar.gz:
+	-tar -xvzf .exports/snapshots.tar.gz

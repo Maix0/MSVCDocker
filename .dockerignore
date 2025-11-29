@@ -2,6 +2,6 @@ build/*.zip
 build/*.box
 build/*.iso
 build/msvc14_iso
-build/msvc14/snapshots/SNAPSHOT-*
 build/msvc14/snapshots/CMP.zip
 wine.docker.tar.gz
+.exports
