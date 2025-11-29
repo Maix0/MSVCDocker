@@ -4,6 +4,7 @@ case "$1" in
 bash) "$@";;
 sh) "$@";;
 zsh) "$@";;
+make) "$@";;
 "") vcwine cmd;;
 *) vcwine cmd /c "$@";;
 esac
